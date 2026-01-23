@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { conversationsAPI } from '@/lib/api';
 import { Conversation, ConversationStats } from '@/types/conversation';
 import { useSocket } from '@/hooks/useSocket';
 
-export default function ConversationsPage() {
+function ConversationsPageInner() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [stats, setStats] = useState<ConversationStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -269,5 +269,19 @@ export default function ConversationsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConversationsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-green-600" />
+        </div>
+      }
+    >
+      <ConversationsPageInner />
+    </Suspense>
   );
 }
